@@ -1,2 +1,3 @@
 # RISC-V-Fault-Simulator
-This is a RISC-V Fault Simulator using Verilog that detects stuck-at and delay faults.
+##Introduction
+Fault simulation is crucial for evaluating processor reliability by injecting faults and analysing their impact. This helps in designing more robust processors that can tolerate manufacturing defects and operational failures.​
