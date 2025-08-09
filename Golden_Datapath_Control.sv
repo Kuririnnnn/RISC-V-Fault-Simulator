@@ -1,5 +1,8 @@
 // -------------- Golden Processor Datapath --------------
 
+`timescale 1ns/1ps
+
+// ------------------------- ALU -------------------------
 module ALU(A,B,Result,ALUControl,OverFlow,Carry,Zero,Negative);
     input [31:0] A,B;
     input [2:0] ALUControl;
@@ -23,6 +26,7 @@ module ALU(A,B,Result,ALUControl,OverFlow,Carry,Zero,Negative);
     assign Negative = Result[31];
 endmodule
 
+// --------------------- Main Decoder ---------------------
 module Main_Decoder(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,ALUOp);
     input [6:0] Op;
     output RegWrite, ALUSrc, MemWrite, ResultSrc, Branch;
@@ -39,6 +43,7 @@ module Main_Decoder(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,ALUOp);
                    (Op == 7'b1100011) ? 2'b01 : 2'b00;
 endmodule
 
+// --------------------- ALU Decoder ---------------------
 module ALU_Decoder(ALUOp, funct3, funct7, op, ALUControl);
     input [1:0] ALUOp;
     input [2:0] funct3;
@@ -55,6 +60,7 @@ module ALU_Decoder(ALUOp, funct3, funct7, op, ALUControl);
                         ((ALUOp == 2'b10) & (funct3 == 3'b100)) ? 3'b111 : 3'b000;
 endmodule
 
+// ---------------------- Control Unit ----------------------
 module Control_Unit_Top(Op, RegWrite, ImmSrc, ALUSrc, MemWrite, ResultSrc, Branch, funct3, funct7, ALUControl);
     input [6:0] Op, funct7;
     input [2:0] funct3;
