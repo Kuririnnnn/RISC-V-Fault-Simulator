@@ -1,7 +1,8 @@
-// ---------------- Main Datapath Modules (Faulty) ----------------
+// ------------------- Faulty Processor Datapath ------------------
 
 `timescale 1ns/1ps
 
+// ------------------------- ALU (Faulty) -------------------------
 module ALU_faulty (
     input clk,
     input rst,
@@ -55,7 +56,7 @@ module ALU_faulty (
         Carry = 1'b0;
     end
 
-    // ⏳ Delay fault injected here
+    // Delay fault injected here
     always @(posedge clk or negedge rst) begin
         if (!rst)
             Result <= 32'b0;
@@ -65,46 +66,7 @@ module ALU_faulty (
 
 endmodule
 
-
-module Register_File_faulty(clk,rst,WE3,WD3,A1,A2,A3,RD1,RD2);
-    input clk,rst,WE3;
-    input [4:0]A1,A2,A3;
-    input [31:0]WD3;
-    output [31:0]RD1,RD2;
-
-    reg [31:0] reg_file [31:0];
-
-    always @ (posedge clk) begin
-        if(WE3)
-            reg_file[A3] <= WD3;
-    end
-
-    assign RD1 = (~rst) ? 32'd0 : reg_file[A1];
-    assign RD2 = (~rst) ? 32'd0 : reg_file[A2];
-
-    initial begin
-        reg_file[5] = 32'h5;
-        reg_file[6] = 32'h4;
-        reg_file[11] = 32'h3;
-        reg_file[12] = 32'h2;
-        reg_file[18] = 32'h5;
-        reg_file[19] = 32'h5;
-        reg_file[20] = 32'h8;
-        reg_file[21] = 32'h9;
-        reg_file[22] = 32'h1;
-        reg_file[23] = 32'h2;
-    end
-endmodule
-
-module Sign_Extend_faulty(In,Imm_Ext,ImmSrc);
-    input [31:0]In;
-    input ImmSrc;
-    output [31:0]Imm_Ext;
-
-    assign Imm_Ext = (ImmSrc == 1'b1) ? {{20{In[31]}},In[31:25],In[11:7]} :
-                                        {{20{In[31]}},In[31:20]};
-endmodule
-
+// ---------------- Main Decoder (Faulty) ----------------
 module Main_Decoder_faulty(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,ALUOp);
     input [6:0]Op;
     output RegWrite,ALUSrc,MemWrite,ResultSrc,Branch;
@@ -119,6 +81,7 @@ module Main_Decoder_faulty(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,A
     assign ALUOp = (Op == 7'b0110011) ? 2'b10 : (Op == 7'b1100011) ? 2'b01 : 2'b00;
 endmodule
 
+// ---------------- ALU Decoder (Faulty) ----------------
 module ALU_Decoder_faulty(ALUOp,funct3,funct7,op,ALUControl);
     input [1:0]ALUOp;
     input [2:0]funct3;
@@ -135,6 +98,7 @@ module ALU_Decoder_faulty(ALUOp,funct3,funct7,op,ALUControl);
                         ((ALUOp == 2'b10) && (funct3 == 3'b100)) ? 3'b111 : 3'b000;
 endmodule
 
+// ---------------- Control Unit (Faulty) ----------------
 module Control_Unit_Top_faulty(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Branch,funct3,funct7,ALUControl);
     input [6:0]Op,funct7;
     input [2:0]funct3;
