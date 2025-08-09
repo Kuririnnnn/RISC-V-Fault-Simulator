@@ -1,15 +1,14 @@
 // ---------------- Top Module (Comparison of Golden and Faulty) ----------------
 
-`timescale 1ns/1ps
+`include "Basic_Helper_Modules.sv"
+`include "Golden_Datapath_Control.sv"
+`include "Golden_Memory_Modules.sv"
+`include "Faulty_Datapath_Control.sv"
+`include "Faulty_Memory_Modules.sv"
+`include "Golden_Top.sv"
+`include "Faulty_Top.sv"
 
-`include "GP_BHM.sv"
-`include "GP_DP.sv"
-`include "GP_MM.sv"
-`include "F_BHM.sv"
-`include "F_DP.sv"
-`include "F_MM.sv"
-`include "GP_Top.sv"
-`include "F_Top.sv"
+`timescale 1ns/1ps
 
 module Single_Cycle_Top_Comparison(
     input clk,
