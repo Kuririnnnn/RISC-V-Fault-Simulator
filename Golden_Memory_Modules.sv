@@ -1,5 +1,8 @@
-// -------------- Memory Modules --------------
+// -------------- Golden Processor Memory Modules --------------
 
+`timescale 1ns/1ps
+
+// ------------------------ Data Memory ------------------------
 module Data_Memory(clk, rst, WE, WD, A, RD);
     input clk, rst, WE;
     input [31:0] A, WD;
@@ -19,6 +22,7 @@ module Data_Memory(clk, rst, WE, WD, A, RD);
     end
 endmodule
 
+// --------------------- Instruction Memory ---------------------
 module Instruction_Memory(rst, A, RD);
     input rst;
     input [31:0] A;
@@ -38,6 +42,7 @@ module Instruction_Memory(rst, A, RD);
     end
 endmodule
 
+// ---------------------- Program Counter ----------------------
 module PC_Module(clk, rst, PC, PC_Next);
     input clk, rst;
     input [31:0] PC_Next;
@@ -52,6 +57,7 @@ module PC_Module(clk, rst, PC, PC_Next);
     end
 endmodule
 
+// ----------------------- Regidter File -----------------------
 module Register_File(clk,rst,WE3,WD3,A1,A2,A3,RD1,RD2);
 
     input clk,rst,WE3;
@@ -86,13 +92,13 @@ module Register_File(clk,rst,WE3,WD3,A1,A2,A3,RD1,RD2);
 
 endmodule
 
+// ------------------------ Sign Extend ------------------------
 module Sign_Extend (In,Imm_Ext,ImmSrc);
 
     input [31:0]In;
     input ImmSrc;
     output [31:0]Imm_Ext;
 
-    assign Imm_Ext = (ImmSrc == 1'b1) ? ({{20{In[31]}},In[31:25],In[11:7]}):
-                                        {{20{In[31]}},In[31:20]};
+    assign Imm_Ext = (ImmSrc == 1'b1) ? ({{20{In[31]}},In[31:25],In[11:7]}):{{20{In[31]}},In[31:20]};
                                 
 endmodule
