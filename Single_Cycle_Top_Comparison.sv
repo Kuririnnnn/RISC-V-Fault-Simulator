@@ -10,6 +10,7 @@
 
 `timescale 1ns/1ps
 
+// ------------------------ Single Cycle Top Comparison ------------------------
 module Single_Cycle_Top_Comparison(
     input clk,
     input rst,
