@@ -8,3 +8,7 @@ Fault simulation is crucial for evaluating processor reliability by injecting fa
 * RTL-Level Validation – Functionality verified through SystemVerilog testbenches and simulation waveforms.
 ## Block Diagram
 <img width="1080" height="677" alt="Image" src="https://github.com/user-attachments/assets/cda133d1-a200-4e56-b32d-cfde901c8861" />
+## Result
+<img width="794" height="279" alt="Image" src="https://github.com/user-attachments/assets/785b1a6e-a5a8-4a8b-bfaf-7f60abd96308" />
+### Waveform
+![Image](https://github.com/user-attachments/assets/0873e78e-24bf-422c-bb13-84fc5374b2af)
