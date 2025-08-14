@@ -17,3 +17,6 @@ Fault simulation is crucial for evaluating processor reliability by injecting fa
 ### Waveform
 
 ![Image](https://github.com/user-attachments/assets/0873e78e-24bf-422c-bb13-84fc5374b2af)
+
+## Tools Used
+EDA Playground
