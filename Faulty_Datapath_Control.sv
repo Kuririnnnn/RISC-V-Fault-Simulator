@@ -1,5 +1,4 @@
 // ------------------- Faulty Processor Datapath ------------------
-
 `timescale 1ns/1ps
 
 // ------------------------- ALU (Faulty) -------------------------
@@ -15,11 +14,12 @@ module ALU_faulty (
     output reg Zero,
     output reg Negative
 );
+
     reg [2:0] ALUControl_effective;
     reg [3:0] fault_counter;
     reg fault_active;
-
-    reg [31:0] Result_internal;    // Intermediate result before delay fault
+    reg [31:0] Result_internal; // Intermediate result before delay fault
+    wire [31:0] SLT_Diff = A - B; // named signal so we can bit-select [31] on it
 
     always @(posedge clk or negedge rst) begin
         if (!rst) begin
@@ -36,17 +36,23 @@ module ALU_faulty (
 
     always @(*) begin
         if (fault_active)
-            ALUControl_effective = 3'b000; // Force AND operation when fault
+            ALUControl_effective = 3'b000; // Force ADD operation when fault
         else
             ALUControl_effective = ALUControl;
 
+        // FIX: encoding now matches Golden_ALU / ALU_Decoder_faulty
+        // (000=ADD, 001=SUB, 010=AND, 011=OR, 101=SLT, 111=XOR).
+        // Previously this case statement used its own unrelated
+        // encoding, so results were wrong from cycle 0 regardless
+        // of the intended delay fault.
         case (ALUControl_effective)
-            3'b000: Result_internal = A & B;
-            3'b001: Result_internal = A | B;
-            3'b010: Result_internal = A + B;
-            3'b110: Result_internal = A - B;
-            3'b111: Result_internal = (A < B) ? 32'b1 : 32'b0;
-            3'b100: Result_internal = ~(A | B);
+            3'b000: Result_internal = A + B;                     // ADD
+            3'b001: Result_internal = A + ((~B) + 1);             // SUB (shared-adder style, see note)
+            3'b010: Result_internal = A & B;                      // AND
+            3'b011: Result_internal = A | B;                      // OR
+            3'b101: Result_internal = {31'b0,
+                        (A[31] ^ B[31]) ? A[31] : SLT_Diff[31]};   // SLT, overflow-safe
+            3'b111: Result_internal = A ^ B;                      // XOR
             default: Result_internal = 32'b0;
         endcase
 
@@ -89,13 +95,13 @@ module ALU_Decoder_faulty(ALUOp,funct3,funct7,op,ALUControl);
     output [2:0]ALUControl;
 
     assign ALUControl = (ALUOp == 2'b00) ? 3'b000 :
-                        (ALUOp == 2'b01) ? 3'b001 :
-                        ((ALUOp == 2'b10) && (funct3 == 3'b000) && ({op[5],funct7[5]} == 2'b11)) ? 3'b001 :
-                        ((ALUOp == 2'b10) && (funct3 == 3'b000) && ({op[5],funct7[5]} != 2'b11)) ? 3'b000 :
-                        ((ALUOp == 2'b10) && (funct3 == 3'b010)) ? 3'b101 :
-                        ((ALUOp == 2'b10) && (funct3 == 3'b110)) ? 3'b011 :
-                        ((ALUOp == 2'b10) && (funct3 == 3'b111)) ? 3'b010 :
-                        ((ALUOp == 2'b10) && (funct3 == 3'b100)) ? 3'b111 : 3'b000;
+                         (ALUOp == 2'b01) ? 3'b001 :
+                         ((ALUOp == 2'b10) && (funct3 == 3'b000) && ({op[5],funct7[5]} == 2'b11)) ? 3'b001 :
+                         ((ALUOp == 2'b10) && (funct3 == 3'b000) && ({op[5],funct7[5]} != 2'b11)) ? 3'b000 :
+                         ((ALUOp == 2'b10) && (funct3 == 3'b010)) ? 3'b101 :
+                         ((ALUOp == 2'b10) && (funct3 == 3'b110)) ? 3'b011 :
+                         ((ALUOp == 2'b10) && (funct3 == 3'b111)) ? 3'b010 :
+                         ((ALUOp == 2'b10) && (funct3 == 3'b100)) ? 3'b111 : 3'b000;
 endmodule
 
 // ---------------- Control Unit (Faulty) ----------------
@@ -105,7 +111,6 @@ module Control_Unit_Top_faulty(Op,RegWrite,ImmSrc,ALUSrc,MemWrite,ResultSrc,Bran
     output RegWrite,ALUSrc,MemWrite,ResultSrc,Branch;
     output [1:0]ImmSrc;
     output [2:0]ALUControl;
-
     wire [1:0]ALUOp;
 
     Main_Decoder_faulty main_decoder(
