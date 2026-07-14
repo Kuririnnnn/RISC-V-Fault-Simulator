@@ -1,0 +1,42 @@
+`timescale 1ns / 1ps
+
+module top_tb;
+
+    reg clk, rst;
+    wire [31:0] PC, Result;
+
+    // Instantiate your design
+    Single_Cycle_Top dut (
+        .clk(clk),
+        .rst(rst),
+        .PC_Top_Out(PC),
+        .Result_Out(Result)
+    );
+
+    // Clock generation: 10ns period
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // Simulation logic
+    initial begin
+        // Initialize reset
+        rst = 0;
+        #12;
+        rst = 1;
+
+        // Run simulation for a while
+        #53;
+
+        // Finish
+        $finish;
+    end
+
+    // Waveform dump
+    initial begin
+        $dumpfile("wave.vcd");
+        $dumpvars(0, top_tb);
+    end
+
+endmodule
