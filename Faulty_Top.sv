@@ -1,5 +1,4 @@
 // ----------------------- Faulty Processor Top -----------------------
-
 `timescale 1ns/1ps
 
 // --------------------- Single Cycle Top (Faulty) ---------------------
@@ -31,7 +30,7 @@ module Single_Cycle_Top_faulty(
         .b(32'd4),
         .c(PCPlus4)
     );
-    
+
     Instruction_Memory_faulty Instruction_Memory(
         .rst(rst),
         .A(PC_Top),
@@ -63,7 +62,11 @@ module Single_Cycle_Top_faulty(
         .c(SrcB)
     );
 
-    ALU ALU(
+    // FIX: was instantiating the golden ALU here. This must be the
+    // faulty ALU or the delay-fault model never actually runs.
+    ALU_faulty ALU(
+        .clk(clk),
+        .rst(rst),
         .A(RD1_Top),
         .B(SrcB),
         .Result(ALUResult),
