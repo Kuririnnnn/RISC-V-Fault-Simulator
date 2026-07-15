@@ -1,11 +1,10 @@
 // ----------------------- Golden Processor Top -----------------------
-
 `timescale 1ns/1ps
 
 // ------------------------- Single Cycle Top -------------------------
 module Single_Cycle_Top(
     input clk,
-    input rst,
+    input rst_n,
     output [31:0] PC_Top_Out,
     output [31:0] Result_Out
 );
@@ -21,7 +20,7 @@ module Single_Cycle_Top(
 
     PC_Module PC(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .PC(PC_Top),
         .PC_Next(PCPlus4)
     );
@@ -31,16 +30,16 @@ module Single_Cycle_Top(
         .b(32'd4),
         .c(PCPlus4)
     );
-    
+
     Instruction_Memory Instruction_Memory(
-        .rst(rst),
+        .rst_n(rst_n),
         .A(PC_Top),
         .RD(RD_Instr)
     );
 
     Register_File Register_File(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .WE3(RegWrite),
         .WD3(Result),
         .A1(RD_Instr[19:15]),
@@ -89,7 +88,7 @@ module Single_Cycle_Top(
 
     Data_Memory Data_Memory(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .WE(MemWrite),
         .WD(RD2_Top),
         .A(ALUResult),
