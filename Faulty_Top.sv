@@ -4,7 +4,7 @@
 // --------------------- Single Cycle Top (Faulty) ---------------------
 module Single_Cycle_Top_faulty(
     input clk,
-    input rst,
+    input rst_n,
     output [31:0] PC_Top_Out,
     output [31:0] Result_Out
 );
@@ -20,7 +20,7 @@ module Single_Cycle_Top_faulty(
 
     PC_Module_faulty PC(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .PC(PC_Top),
         .PC_Next(PCPlus4)
     );
@@ -32,14 +32,14 @@ module Single_Cycle_Top_faulty(
     );
 
     Instruction_Memory_faulty Instruction_Memory(
-        .rst(rst),
+        .rst_n(rst_n),
         .A(PC_Top),
         .RD(RD_Instr)
     );
 
     Register_File_faulty Register_File(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .WE3(RegWrite),
         .WD3(Result),
         .A1(RD_Instr[19:15]),
@@ -62,11 +62,9 @@ module Single_Cycle_Top_faulty(
         .c(SrcB)
     );
 
-    // FIX: was instantiating the golden ALU here. This must be the
-    // faulty ALU or the delay-fault model never actually runs.
     ALU_faulty ALU(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .A(RD1_Top),
         .B(SrcB),
         .Result(ALUResult),
@@ -92,7 +90,7 @@ module Single_Cycle_Top_faulty(
 
     Data_Memory_faulty Data_Memory(
         .clk(clk),
-        .rst(rst),
+        .rst_n(rst_n),
         .WE(MemWrite),
         .WD(RD2_Top),
         .A(ALUResult),
