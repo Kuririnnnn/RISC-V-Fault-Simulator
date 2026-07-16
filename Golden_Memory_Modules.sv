@@ -40,7 +40,10 @@ module Instruction_Memory #(parameter MEM_DEPTH = 1024) (rst_n, A, RD);
         mem[5] = 32'h017B2433; // SLT X8, X23, X22
         mem[6] = 32'h01390463; // BEQ X18, X19, +8   (x18==x19==5, always taken)
         mem[7] = 32'h01390433; // ADD X8, X18, X19   (canary: should be SKIPPED -- would give 10)
-        mem[8] = 32'h015A7433; // AND X8, X20, X21   (branch target: x20=8,x21=9 -> 8)
+        mem[8]  = 32'h015A7433; // AND X8, X20, X21   (BEQ branch target: x20=8,x21=9 -> 8)
+        mem[9]  = 32'h015A1463; // BNE X20, X21, +8   (x20=8 != x21=9, always taken)
+        mem[10] = 32'h015A6433; // OR  X8, X20, X21   (canary: should be SKIPPED -- would give 9)
+        mem[11] = 32'h017B4433; // XOR X8, X22, X23   (BNE branch target: x22=1,x23=2 -> 3)
         // Trailing NOPs (real RISC-V encoding: ADDI x0,x0,0) so the run
         // doesn't fetch uninitialized ('x') memory once the branch/fall-
         // through paths run past the end of the program. This design
@@ -48,10 +51,15 @@ module Instruction_Memory #(parameter MEM_DEPTH = 1024) (rst_n, A, RD);
         // here: opcode 0010011 falls through every decoder's default
         // case, giving RegWrite=0, MemWrite=0, Branch=0 -- i.e. it's an
         // effective no-op even though it isn't "properly" decoded.
-        mem[9]  = 32'h00000013;
-        mem[10] = 32'h00000013;
-        mem[11] = 32'h00000013;
         mem[12] = 32'h00000013;
+        mem[13] = 32'h00000013;
+        mem[14] = 32'h00000013;
+        mem[15] = 32'h00000013;
+        mem[16] = 32'h00000013;
+        mem[17] = 32'h00000013;
+        mem[18] = 32'h00000013;
+        mem[19] = 32'h00000013;
+        mem[20] = 32'h00000013;
     end
 endmodule
 
