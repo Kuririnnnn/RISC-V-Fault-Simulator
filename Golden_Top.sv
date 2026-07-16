@@ -10,25 +10,45 @@ module Single_Cycle_Top(
 );
 
     wire [31:0] PC_Top, RD_Instr, RD1_Top, Imm_Ext_Top, ALUResult;
-    wire [31:0] ReadData, PCPlus4, RD2_Top, SrcB, Result;
-    wire RegWrite, MemWrite, ALUSrc, ResultSrc;
+    wire [31:0] ReadData, PCPlus4, PCTarget, PCNext, RD2_Top, SrcB, Result;
+    wire RegWrite, MemWrite, ALUSrc, ResultSrc, Branch, Zero, PCSrc;
     wire [1:0] ImmSrc;
     wire [2:0] ALUControl_Top;
 
     assign PC_Top_Out = PC_Top;
     assign Result_Out = Result;
 
+    // Branch taken when the instruction is a branch AND the ALU's Zero
+    // flag is set. Since ALU_Decoder always forces SUB (ALUControl=001)
+    // for branch opcodes, Zero==1 means rs1==rs2 -- this implements BEQ.
+    // Other branch types (BNE, BLT, ...) aren't decoded yet; see note
+    // in Shared_Decoder_Modules.sv.
+    assign PCSrc = Branch & Zero;
+
     PC_Module PC(
         .clk(clk),
         .rst_n(rst_n),
         .PC(PC_Top),
-        .PC_Next(PCPlus4)
+        .PC_Next(PCNext)
     );
 
     PC_Adder PC_Adder(
         .a(PC_Top),
         .b(32'd4),
         .c(PCPlus4)
+    );
+
+    PC_Adder PC_Adder_Branch(
+        .a(PC_Top),
+        .b(Imm_Ext_Top),
+        .c(PCTarget)
+    );
+
+    Mux PC_Src_Mux(
+        .a(PCPlus4),
+        .b(PCTarget),
+        .s(PCSrc),
+        .c(PCNext)
     );
 
     Instruction_Memory Instruction_Memory(
@@ -51,7 +71,7 @@ module Single_Cycle_Top(
 
     Sign_Extend Sign_Extend(
         .In(RD_Instr),
-        .ImmSrc(ImmSrc[0]),
+        .ImmSrc(ImmSrc),
         .Imm_Ext(Imm_Ext_Top)
     );
 
@@ -69,7 +89,7 @@ module Single_Cycle_Top(
         .ALUControl(ALUControl_Top),
         .OverFlow(),
         .Carry(),
-        .Zero(),
+        .Zero(Zero),
         .Negative()
     );
 
@@ -80,7 +100,7 @@ module Single_Cycle_Top(
         .ALUSrc(ALUSrc),
         .MemWrite(MemWrite),
         .ResultSrc(ResultSrc),
-        .Branch(),
+        .Branch(Branch),
         .funct3(RD_Instr[14:12]),
         .funct7(RD_Instr[31:25]),
         .ALUControl(ALUControl_Top)
