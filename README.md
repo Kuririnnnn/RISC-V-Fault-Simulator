@@ -26,7 +26,7 @@ Not yet implemented: I-type ALU-immediate instructions (ADDI, ANDI, ...), BLT/BG
 
 ## Block Diagram
 
-[*(screenshot — regenerate if the datapath diagram has changed)*](https://github.com/Kuririnnnn/RISC-V-Fault-Simulator/issues/1#issue-4900538316)
+https://github.com/Kuririnnnn/RISC-V-Fault-Simulator/issues/1#issue-4900538316
 
 ## Result
 
