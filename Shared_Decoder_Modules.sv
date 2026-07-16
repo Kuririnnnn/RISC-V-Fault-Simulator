@@ -1,10 +1,6 @@
 // -------------------- Shared Decode Logic --------------------
 // Instruction decoding is identical between the golden and faulty
 // processors — only the ALU and memories are supposed to differ.
-// Keeping one copy here (instead of a golden AND a _faulty copy)
-// means the two control paths can no longer quietly drift apart,
-// which is exactly what happened before with the ALUControl
-// encoding mismatch between the golden and faulty ALUs.
 `timescale 1ns/1ps
 
 // --------------------- Main Decoder ---------------------
