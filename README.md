@@ -26,7 +26,7 @@ Not yet implemented: I-type ALU-immediate instructions (ADDI, ANDI, ...), BLT/BG
 
 ## Block Diagram
 
-https://github.com/Kuririnnnn/RISC-V-Fault-Simulator/issues/1#issue-4900538316
+<img width="1080" height="677" alt="Image" src="https://github.com/user-attachments/assets/9425281b-e36a-4be3-be62-10617728648b" />
 
 ## Result
 
