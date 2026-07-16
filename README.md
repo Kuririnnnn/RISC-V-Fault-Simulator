@@ -30,7 +30,7 @@ Not yet implemented: I-type ALU-immediate instructions (ADDI, ANDI, ...), BLT/BG
 
 ## Result
 
-*(screenshot — regenerate from the current `design.sv` + `testbench.sv` to reflect branch and load/store support)*
+<img width="757" height="743" alt="Image" src="https://github.com/user-attachments/assets/357bedd6-9a6f-4fd1-a27f-6ccfc4fd536f" />
 
 ### Waveform
 
