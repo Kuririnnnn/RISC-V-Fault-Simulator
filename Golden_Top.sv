@@ -18,12 +18,14 @@ module Single_Cycle_Top(
     assign PC_Top_Out = PC_Top;
     assign Result_Out = Result;
 
-    // Branch taken when the instruction is a branch AND the ALU's Zero
-    // flag is set. Since ALU_Decoder always forces SUB (ALUControl=001)
-    // for branch opcodes, Zero==1 means rs1==rs2 -- this implements BEQ.
-    // Other branch types (BNE, BLT, ...) aren't decoded yet; see note
-    // in Shared_Decoder_Modules.sv.
-    assign PCSrc = Branch & Zero;
+    // Branch taken when the instruction is a branch AND the condition
+    // holds. ALU_Decoder always forces SUB (ALUControl=001) for branch
+    // opcodes, so Zero==1 means rs1==rs2. funct3[0] (bit 12 of the
+    // instruction) is 0 for BEQ (take when equal) and 1 for BNE (take
+    // when NOT equal) -- XOR-ing it with Zero flips the sense for BNE.
+    // Other branch types (BLT, BGE, ...) still aren't decoded; they'd
+    // need the ALU's SLT result routed here too, not just Zero.
+    assign PCSrc = Branch & (Zero ^ RD_Instr[12]);
 
     PC_Module PC(
         .clk(clk),
