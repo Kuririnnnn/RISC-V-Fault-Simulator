@@ -18,7 +18,9 @@ module Single_Cycle_Top_faulty(
     assign PC_Top_Out = PC_Top;
     assign Result_Out = Result;
 
-    assign PCSrc = Branch & Zero;
+    // funct3[0] (bit 12) distinguishes BEQ (take when equal) from BNE
+    // (take when not equal) -- see Golden_Top.sv for the full note.
+    assign PCSrc = Branch & (Zero ^ RD_Instr[12]);
 
     PC_Module_faulty PC(
         .clk(clk),
