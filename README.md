@@ -34,7 +34,7 @@ Not yet implemented: I-type ALU-immediate instructions (ADDI, ANDI, ...), BLT/BG
 
 ### Waveform
 
-*(screenshot — regenerate; the current waveform should show the BEQ/BNE branches taken on the golden side, the faulty side missing both branches due to the instruction-memory fault, and a clean store/load round-trip)*
+<img width="1816" height="375" alt="Image" src="https://github.com/user-attachments/assets/3fae3956-6500-4087-983d-fa1fbbc67fe8" />
 
 ## Tools Used
 
