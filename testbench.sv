@@ -46,7 +46,7 @@ module tb_Processor_Comparison;
     initial begin
         rst = 0;
         #10 rst = 1;
-        #60 $finish;
+        #110 $finish;
     end
 
     // Monitor outputs
